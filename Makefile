@@ -2,4 +2,4 @@ CC=gcc
 CFLAGS=-Iinclude
 
 all:
-	$(CC) $(CFLAGS) src/*.c -o bin/shimu
+	$(CC) $(CFLAGS) src/*.c src/utils/*.c -o bin/shimu
