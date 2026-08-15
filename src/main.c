@@ -9,6 +9,7 @@
 #include "memory.h"
 #include "utils/formatting.h"
 #include <stdio.h>
+#include <string.h>
 
 int main(int argc, char *argv[]) {
     printf("--- শিমু (Shimu) সিমুলেটর v১.০ ---\n");
@@ -30,8 +31,16 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // ৪. আউটপুট লগ ফাইল ওপেন করা
-    FILE *log_file = fopen("সিমুলেটর_ফলাফল.txt", "w");
+    // ৪. আউটপুট লগ ফাইল ওপেন করা (ইনপুট ফাইলের পাশে)
+    char output_path[1024];
+    const char *last_slash = strrchr(argv[1], '/');
+    if (last_slash) {
+        size_t dir_len = last_slash - argv[1] + 1;
+        snprintf(output_path, sizeof(output_path), "%.*sসিমুলেটর_ফলাফল.txt", (int)dir_len, argv[1]);
+    } else {
+        snprintf(output_path, sizeof(output_path), "%s", "সিমুলেটর_ফলাফল.txt");
+    }
+    FILE *log_file = fopen(output_path, "w");
     if (!log_file) {
         printf("ভুল: আউটপুট লগ ফাইল তৈরি করা যায়নি।\n");
         fclose(file);
@@ -52,7 +61,7 @@ int main(int argc, char *argv[]) {
     CPU cpu;
     init_cpu(&cpu);
 
-    printf("সিস্টেম: এক্সিকিউশন শুরু হচ্ছে... ফলাফল 'সিমুলেটর_ফলাফল.txt' ফাইলে দেখুন।\n");
+    printf("সিস্টেম: এক্সিকিউশন শুরু হচ্ছে... ফলাফল '%s' ফাইলে দেখুন।\n", output_path);
     
     // ৭. সিমুলেশন লুপ (Fetch-Decode-Execute Cycle)
     while (!cpu.is_halted) {
